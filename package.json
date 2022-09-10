@@ -17,7 +17,6 @@
     "typescript": "*"
   },
   "dependencies": {
-    "readline-sync": "^1.4.10",
-    "ts-node": "^10.9.1"
+    "readline-sync": "^1.4.10"
   }
 }
