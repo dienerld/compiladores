@@ -71,6 +71,7 @@ export class Scanner {
     return this.source.charAt(this.current + 1)
   }
 
+  // match Durelli
   expect(expected: string) {
     if (this.source.charAt(this.current) != expected) return false
 
@@ -84,7 +85,7 @@ export class Scanner {
   }
 
   scanToken() {
-    const c = this.consume()
+    const c = this.consume() // advance
     switch (c) {
       case '(': this.push(TokenType.LEFT_PAREN); break
       case ')': this.push(TokenType.RIGHT_PAREN); break
