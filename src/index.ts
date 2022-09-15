@@ -6,8 +6,6 @@ import { Scanner } from './Scanner'
 
 const args = process.argv.slice(2)
 
-
-
 if (args.length > 1) {
   console.log('Usage: file scripts')
   process.exit(1)

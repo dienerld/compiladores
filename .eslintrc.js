@@ -12,6 +12,9 @@ module.exports = {
     project: './tsconfig.json'
   },
   rules: {
-    '@typescript-eslint/restrict-template-expressions': 'off'
+    '@typescript-eslint/restrict-template-expressions': 'off',
+    '@typescript-eslint/space-before-function-paren': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    eqeqeq: 'warn'
   }
 }

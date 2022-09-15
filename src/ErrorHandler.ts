@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-extraneous-class */
 export class ErrorHandler {
   static hadError = false
 

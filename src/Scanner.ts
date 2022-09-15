@@ -14,22 +14,22 @@ function isAlphanum(c: string) {
 }
 
 const KEYWORDS_TABLE: { [kw: string]: TokenType | undefined } = {
-  "and": TokenType.AND,
-  "class": TokenType.CLASS,
-  "else": TokenType.ELSE,
-  "false": TokenType.FALSE,
-  "for": TokenType.FOR,
-  "fun": TokenType.FUN,
-  "if": TokenType.IF,
-  "nil": TokenType.NIL,
-  "or": TokenType.OR,
-  "print": TokenType.PRINT,
-  "return": TokenType.RETURN,
-  "super": TokenType.SUPER,
-  "this": TokenType.THIS,
-  "true": TokenType.TRUE,
-  "var": TokenType.VAR,
-  "while": TokenType.WHILE,
+  and: TokenType.AND,
+  class: TokenType.CLASS,
+  else: TokenType.ELSE,
+  false: TokenType.FALSE,
+  for: TokenType.FOR,
+  fun: TokenType.FUN,
+  if: TokenType.IF,
+  nil: TokenType.NIL,
+  or: TokenType.OR,
+  print: TokenType.PRINT,
+  return: TokenType.RETURN,
+  super: TokenType.SUPER,
+  this: TokenType.THIS,
+  true: TokenType.TRUE,
+  var: TokenType.VAR,
+  while: TokenType.WHILE
 }
 
 export class Scanner {
@@ -39,9 +39,7 @@ export class Scanner {
   current: number = 0
   line: number = 1
 
-  constructor(public source: string) {
-
-  }
+  constructor(public source: string) { }
 
   isAtEnd() {
     return this.current >= this.source.length
@@ -53,8 +51,8 @@ export class Scanner {
       this.scanToken()
     }
 
-    this.tokens.push(new Token(TokenType.EOF, "", null, this.line))
-    return this.tokens;
+    this.tokens.push(new Token(TokenType.EOF, '', null, this.line))
+    return this.tokens
   }
 
   consume(): string {
@@ -88,55 +86,55 @@ export class Scanner {
   scanToken() {
     const c = this.consume()
     switch (c) {
-      case '(': this.push(TokenType.LEFT_PAREN); break;
-      case ')': this.push(TokenType.RIGHT_PAREN); break;
-      case '{': this.push(TokenType.LEFT_BRACE); break;
-      case '}': this.push(TokenType.RIGHT_BRACE); break;
-      case ',': this.push(TokenType.COMMA); break;
-      case '.': this.push(TokenType.DOT); break;
-      case '-': this.push(TokenType.MINUS); break;
-      case '+': this.push(TokenType.PLUS); break;
-      case ';': this.push(TokenType.SEMICOLON); break;
-      case '*': this.push(TokenType.STAR); break;
+      case '(': this.push(TokenType.LEFT_PAREN); break
+      case ')': this.push(TokenType.RIGHT_PAREN); break
+      case '{': this.push(TokenType.LEFT_BRACE); break
+      case '}': this.push(TokenType.RIGHT_BRACE); break
+      case ',': this.push(TokenType.COMMA); break
+      case '.': this.push(TokenType.DOT); break
+      case '-': this.push(TokenType.MINUS); break
+      case '+': this.push(TokenType.PLUS); break
+      case ';': this.push(TokenType.SEMICOLON); break
+      case '*': this.push(TokenType.STAR); break
       case '!':
-        this.push(this.expect('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
-        break;
+        this.push(this.expect('=') ? TokenType.BANG_EQUAL : TokenType.BANG)
+        break
       case '=':
-        this.push(this.expect('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
-        break;
+        this.push(this.expect('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL)
+        break
       case '<':
-        this.push(this.expect('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
-        break;
+        this.push(this.expect('=') ? TokenType.LESS_EQUAL : TokenType.LESS)
+        break
       case '>':
-        this.push(this.expect('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
-        break;
+        this.push(this.expect('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER)
+        break
       case '/':
         if (this.expect('/')) {
           // A comment goes until the end of the line.
-          while (this.peek() != '\n' && !this.isAtEnd()) this.consume();
+          while (this.peek() != '\n' && !this.isAtEnd()) this.consume()
         } else {
-          this.push(TokenType.SLASH);
+          this.push(TokenType.SLASH)
         }
-        break;
+        break
       case ' ':
       case '\r':
       case '\t':
         // Ignore whitespace.
-        break;
+        break
 
       case '\n':
         this.line += 1
-        break;
-      case '"': this.scanString(); break;
+        break
+      case '"': this.scanString(); break
       default:
         if (isDigit(c)) {
           this.scanNumber()
         } else if (isAlpha(c)) {
           this.scanIdentifier()
         } else {
-          ErrorHandler.error(this.line, "Unexpected character.");
+          ErrorHandler.error(this.line, 'Unexpected character.')
         }
-        break;
+        break
     }
   }
 
@@ -147,7 +145,7 @@ export class Scanner {
     }
 
     if (this.isAtEnd()) {
-      ErrorHandler.error(this.line, "Unterminated string.")
+      ErrorHandler.error(this.line, 'Unterminated string.')
       return
     }
 
@@ -155,8 +153,8 @@ export class Scanner {
     this.consume()
 
     // Trim the surrounding quotes.
-    const value = this.source.substring(this.start + 1, this.current - 1);
-    this.push(TokenType.STRING, value);
+    const value = this.source.substring(this.start + 1, this.current - 1)
+    this.push(TokenType.STRING, value)
   }
 
   scanNumber() {
@@ -167,10 +165,10 @@ export class Scanner {
       // Consume the "."
       this.consume()
 
-      while (isDigit(this.peek())) this.consume();
+      while (isDigit(this.peek())) this.consume()
     }
 
-    this.push(TokenType.NUMBER, Number (this.source.substring(this.start, this.current)));
+    this.push(TokenType.NUMBER, Number(this.source.substring(this.start, this.current)))
   }
 
   scanIdentifier() {
