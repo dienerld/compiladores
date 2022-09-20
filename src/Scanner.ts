@@ -113,6 +113,16 @@ export class Scanner {
         if (this.expect('/')) {
           // A comment goes until the end of the line.
           while (this.peek() != '\n' && !this.isAtEnd()) this.consume()
+        } else if (this.peek() == '*') {
+          while (!(this.peek() === '*' && this.peekNext() === '/') && !this.isAtEnd()) {
+            this.consume()
+          }
+          if (this.isAtEnd()) {
+            ErrorHandler.error(this.line, 'Expect close multiline commentary.')
+            return
+          }
+          this.consume()
+          this.consume()
         } else {
           this.push(TokenType.SLASH)
         }

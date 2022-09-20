@@ -1,0 +1,12 @@
+var foo = "bar";
+fun foo(){};
+//dsdsd
+
+/*
+dfsdfdsfdsfds
+
+sdd
+
+*/
+var foo1 = "dsd";
+dasd;
