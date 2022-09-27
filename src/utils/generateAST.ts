@@ -41,11 +41,19 @@ function defineAst(outputDir: string, baseName: string) {
   const nameClass = baseName.trim().split('')
   nameClass[0] = nameClass[0].toUpperCase()
   const name = nameClass.join('')
-  const prototype = `class ${name} {
+
+  const prototype = `
+class ${name} {
+  class Binary {
+    left: Expr
+    operator: Token
+    right: Expr
+  }
 
 }
 
-export { ${name} }`
+export { ${name} }
+`
 
   fs.writeFileSync(path, prototype)
 }
