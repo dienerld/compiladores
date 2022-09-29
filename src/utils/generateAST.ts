@@ -1,59 +1,52 @@
 import fs from 'fs'
 
-import { Token } from '../Token'
-
-interface Unary {
-  kind: 'unary'
-  operator: Token
-  right: Expr
+function defineClass(name: string, fields: string[]) {
+  return `export class ${name} {
+  kind: '${name.toLowerCase()}' = '${name.toLowerCase()}'
+  constructor(${fields.map(f => `public ${f}`).join(', ')}) {}
+}`
 }
 
-interface Binary {
-  kind: 'binary'
-  operator: Token
-  right: Expr
+function parseTemplate(template: string) {
+  const [name, fields_] = template.split('=').map(s => s.trim())
+  const fields = fields_.split(',').map(s => s.trim())
+  return { name, fields }
 }
 
-interface Grouping {
-  kind: 'grouping'
-  expression: Expr
+function defineAst(outputDir: string) {
+  const path = `${outputDir}/Ast.ts`
+
+  const classes = classesTemplate.map(template => parseTemplate(template))
+
+  const prototype = `import { Token } from './Token'
+
+${classes.map(cc => defineClass(cc.name, cc.fields)).join('\n')}
+
+export type Expr = ${classes.map(cc => cc.name).join(' | ')}
+
+export interface Visitor<R> {
+${classes.map(cc => `  ${cc.name.toLowerCase()}: (expr: ${cc.name}) => R`).join('\n')}
 }
 
-interface Literal {
-  kind: 'literal'
-  value: any
+export function accept<R>(self: Expr, visitor: Visitor<R>) {
+  // @ts-ignore
+  return visitor[self.kind](self)
 }
-
-type Expr = Unary | Binary | Grouping | Literal
-
-const args = process.argv.slice(2)
-
-if (args.length > 2) {
-  console.log('Usage: file scripts')
-  process.exit(1)
-}
-if (args.length === 2) {
-  defineAst(args[0], args[1])
-}
-
-function defineAst(outputDir: string, baseName: string) {
-  const path = `${outputDir}/${baseName}.ts`
-  const nameClass = baseName.trim().split('')
-  nameClass[0] = nameClass[0].toUpperCase()
-  const name = nameClass.join('')
-
-  const prototype = `
-class ${name} {
-  class Binary {
-    left: Expr
-    operator: Token
-    right: Expr
-  }
-
-}
-
-export { ${name} }
 `
 
   fs.writeFileSync(path, prototype)
 }
+
+
+const args = process.argv.slice(2)
+
+if (args.length === 1) {
+  defineAst(args[0])
+}
+
+const classesTemplate = [
+  'Binary = left: Expr, operator: Token, right: Expr',
+  'Unary = operator: Token, right: Expr',
+  'Grouping = expression: Expr',
+  'Literal = value: any',
+]
