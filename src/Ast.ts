@@ -1,35 +1,36 @@
-import {Token} from './Token'
+import { Token } from './Token'
 
-interface Binary {
-  kind: "binary",
-  left: Expr,
-  operator: Token,
-  right: Expr
+class Binary {
+  static kind = 'binary'
+  constructor(
+    public left: Expr,
+    public operator: Token,
+    public right: Expr
+  ) {}
 }
 
-interface Grouping {
-  kind: "grouping",
-  expression: Expr,
+class Grouping {
+  static kind = 'grouping'
+  constructor(public expression: Expr) {}
 }
 
-interface Literal {
-  kind: "literal",
-  value: any
+class Literal {
+  static kind = 'literal'
+  constructor(public value: any) {}
 }
 
-interface Unary {
-  kind: "unary",
-  operator: Token,
-  right: Expr
+class Unary {
+  static kind = 'unary'
+  constructor(public operator: Token, public right: Expr) {}
 }
 
-type Expr = Binary | Unary | Grouping | Literal;
+type Expr = (Binary | Unary | Grouping | Literal)
 
 interface Visitor<R> {
-  binary: (expr: Binary) => R,
-  unary: (expr: Unary) => R,
-  grouping: (expr: Grouping) => R,
-  literal: (expr: Literal) => R,
+  binary: (expr: Binary) => R
+  unary: (expr: Unary) => R
+  grouping: (expr: Grouping) => R
+  literal: (expr: Literal) => R
 }
 
 const ASTPrinter: Visitor<string> = {
@@ -37,14 +38,14 @@ const ASTPrinter: Visitor<string> = {
     return `(${expr.operator.lexeme} ${accept(expr.left, ASTPrinter)} ${accept(expr.right, ASTPrinter)})`
   },
   unary: (expr: Unary) => {
-    return "(unary)"
+    return '(unary)'
   },
   grouping: (expr: Grouping) => {
-    return "(grouping)"
+    return '(grouping)'
   },
   literal: (expr: Literal) => {
     return `${expr.value}`
-  },
+  }
 }
 
 function accept<R>(self: Expr, visitor: Visitor<R>) {
