@@ -1,3 +1,5 @@
+/* AUTO-GENERATED FILE, DONT TOUCH */
+  
 import { Token } from './Token'
 
 export class Binary {
@@ -14,7 +16,7 @@ export class Grouping {
 }
 export class Literal {
   kind: 'literal' = 'literal'
-  constructor(public value: any) {}
+  constructor(public value: Token) {}
 }
 
 export type Expr = Binary | Unary | Grouping | Literal

@@ -13,12 +13,14 @@ function parseTemplate(template: string) {
   return { name, fields }
 }
 
-function defineAst(outputDir: string) {
+function defineAst(outputDir: string, classesTemplate: string[]) {
   const path = `${outputDir}/Ast.ts`
 
   const classes = classesTemplate.map(template => parseTemplate(template))
 
-  const prototype = `import { Token } from './Token'
+  const prototype = `/* AUTO-GENERATED FILE, DONT TOUCH */
+  
+import { Token } from './Token'
 
 ${classes.map(cc => defineClass(cc.name, cc.fields)).join('\n')}
 
@@ -37,16 +39,16 @@ export function accept<R>(self: Expr, visitor: Visitor<R>) {
   fs.writeFileSync(path, prototype)
 }
 
-
-const args = process.argv.slice(2)
-
-if (args.length === 1) {
-  defineAst(args[0])
-}
-
 const classesTemplate = [
   'Binary = left: Expr, operator: Token, right: Expr',
   'Unary = operator: Token, right: Expr',
   'Grouping = expression: Expr',
-  'Literal = value: any',
+  'Literal = value: Token',
 ]
+
+const args = process.argv.slice(2)
+
+if (args.length === 1) {
+  defineAst(args[0], classesTemplate)
+}
+
