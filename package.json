@@ -21,6 +21,7 @@
     "readline-sync": "^1.4.10"
   },
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "generate": "ts-node src/utils/generateAST.ts"
   }
 }

@@ -38,10 +38,10 @@ const ASTPrinter: Visitor<string> = {
     return `(${expr.operator.lexeme} ${accept(expr.left, ASTPrinter)} ${accept(expr.right, ASTPrinter)})`
   },
   unary: (expr: Unary) => {
-    return '(unary)'
+    return `(${expr.operator.lexeme} ${accept(expr.right, ASTPrinter)})`
   },
   grouping: (expr: Grouping) => {
-    return '(grouping)'
+    return `${expr.expression}`
   },
   literal: (expr: Literal) => {
     return `${expr.value}`
