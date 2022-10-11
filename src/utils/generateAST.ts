@@ -2,7 +2,7 @@ import fs from 'fs'
 
 function defineClass(name: string, fields: string[]) {
   return `export class ${name} {
-  kind: '${name.toLowerCase()}' = '${name.toLowerCase()}'
+  readonly kind = '${name.toLowerCase()}'
   constructor(${fields.map(f => `public ${f}`).join(', ')}) {}
 }`
 }
@@ -19,7 +19,7 @@ function defineAst(outputDir: string, classesTemplate: string[]) {
   const classes = classesTemplate.map(template => parseTemplate(template))
 
   const prototype = `/* AUTO-GENERATED FILE, DONT TOUCH */
-  
+
 import { Token } from './Token'
 
 ${classes.map(cc => defineClass(cc.name, cc.fields)).join('\n')}
@@ -31,7 +31,7 @@ ${classes.map(cc => `  ${cc.name.toLowerCase()}: (expr: ${cc.name}) => R`).join(
 }
 
 export function accept<R>(self: Expr, visitor: Visitor<R>) {
-  // @ts-ignore
+  // @ts-expect-error
   return visitor[self.kind](self)
 }
 `
@@ -43,7 +43,7 @@ const classesTemplate = [
   'Binary = left: Expr, operator: Token, right: Expr',
   'Unary = operator: Token, right: Expr',
   'Grouping = expression: Expr',
-  'Literal = value: Token',
+  'Literal = value: Token'
 ]
 
 const args = process.argv.slice(2)
@@ -51,4 +51,3 @@ const args = process.argv.slice(2)
 if (args.length === 1) {
   defineAst(args[0], classesTemplate)
 }
-
