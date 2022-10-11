@@ -1,21 +1,21 @@
 /* AUTO-GENERATED FILE, DONT TOUCH */
-  
+
 import { Token } from './Token'
 
 export class Binary {
-  kind: 'binary' = 'binary'
+  readonly kind = 'binary'
   constructor(public left: Expr, public operator: Token, public right: Expr) {}
 }
 export class Unary {
-  kind: 'unary' = 'unary'
+  readonly kind = 'unary'
   constructor(public operator: Token, public right: Expr) {}
 }
 export class Grouping {
-  kind: 'grouping' = 'grouping'
+  readonly kind = 'grouping'
   constructor(public expression: Expr) {}
 }
 export class Literal {
-  kind: 'literal' = 'literal'
+  readonly kind = 'literal'
   constructor(public value: Token) {}
 }
 
@@ -29,6 +29,6 @@ export interface Visitor<R> {
 }
 
 export function accept<R>(self: Expr, visitor: Visitor<R>) {
-  // @ts-ignore
+  // @ts-expect-error
   return visitor[self.kind](self)
 }
