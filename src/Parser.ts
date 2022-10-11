@@ -30,6 +30,11 @@ export class Parser {
     return this.tokens[this.current - 1]
   }
 
+  private error(line: number, message: string): void {
+    ErrorHandler.error(line, message)
+    throw new ErrorHandler(message)
+  }
+
   private primary(): Expr {
     if (this.match(TokenType.FALSE)) return new Literal(false)
     if (this.match(TokenType.TRUE)) return new Literal(true)
@@ -44,11 +49,13 @@ export class Parser {
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
       return new Grouping(expr)
     }
+
+    throw this.error(this.peek().line, 'Expected Expression')
   }
 
   private consume(token: TokenType, message: string): Token {
     if (this.check(token)) return this.advance()
-    throw ErrorHandler.error(this.peek().line, message)
+    throw this.error(this.peek().line, message)
   }
 
   private unary(): Expr {
@@ -116,5 +123,16 @@ export class Parser {
     }
 
     return expr
+  }
+
+  parse() {
+    try {
+      return this.expression()
+    } catch (e) {
+      if (e instanceof ErrorHandler) return null
+
+      console.error(e)
+      return null
+    }
   }
 }

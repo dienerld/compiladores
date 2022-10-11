@@ -3,6 +3,8 @@ import fs from 'fs'
 
 import { ErrorHandler } from './ErrorHandler'
 import { Scanner } from './Scanner'
+import { Parser } from './Parser'
+import { accept, Binary, Grouping, Literal, Unary, Visitor } from './Ast'
 
 const args = process.argv.slice(2)
 
@@ -10,6 +12,22 @@ if (args.length > 1) {
   console.log('Usage: file scripts')
   process.exit(1)
 }
+
+const ASTPrinter: Visitor<string> = {
+  binary: (expr: Binary) => {
+    return `(${expr.operator.toPretty()}${accept(expr.left, ASTPrinter)}${accept(expr.right, ASTPrinter)})`
+  },
+  unary: (expr: Unary) => {
+    return `(${expr.operator.toPretty}${accept(expr.right, ASTPrinter)})`
+  },
+  grouping: (expr: Grouping) => {
+    return `(group ${accept(expr.expression, ASTPrinter)})`
+  },
+  literal: (expr: Literal) => {
+    return `${expr.value} `
+  }
+}
+
 if (args.length === 1) {
   console.log('Leitura de arquivo')
   runFile(args[0])
@@ -38,10 +56,10 @@ function runPrompt (): void {
 function run (source: string): void {
   const scanner = new Scanner(source)
   const tokens = scanner.scan()
+  const parser = new Parser(tokens)
+  const expr = parser.parse()
 
-  let result = ''
-  for (const token of tokens) {
-    result += token.toPretty()
-  }
-  console.log(result)
+  if (ErrorHandler.hadError || expr === null) return
+
+  console.log(accept(expr, ASTPrinter))
 }

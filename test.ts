@@ -20,6 +20,7 @@ const test_tree = new Binary(
   new Literal(new Token(TokenType.NUMBER, '5', 5, 0)),
   new Token(TokenType.STAR, '*', null, 0),
   new Unary(new Token(TokenType.MINUS, '-', null, 0),
-    new Literal(new Token(TokenType.STRING, '"foo"', 'foo', 0))))
+    new Literal(new Token(TokenType.STRING, '"foo"', 'foo', 0)))
+)
 
 console.log(accept(test_tree, ASTPrinter))

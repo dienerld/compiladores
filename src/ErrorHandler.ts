@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-extraneous-class */
-export class ErrorHandler {
+export class ErrorHandler extends Error {
   static hadError = false
 
   static error (lineNumber: number, message: string): void {
