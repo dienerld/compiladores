@@ -16,7 +16,7 @@ export class Grouping {
 }
 export class Literal {
   readonly kind = 'literal'
-  constructor(public value: Token) {}
+  constructor(public value: any) {}
 }
 
 export type Expr = Binary | Unary | Grouping | Literal

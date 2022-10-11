@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-throw-literal */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import { Binary, Expr, Literal, Unary } from './Ast'
+import { Binary, Expr, Grouping, Literal, Unary } from './Ast'
+import { ErrorHandler } from './ErrorHandler'
 import { Token, TokenType } from './Token'
 
 export class Parser {
@@ -27,20 +29,26 @@ export class Parser {
   private previous(): Token {
     return this.tokens[this.current - 1]
   }
-  private  primary(): Expr {
-    if (this.match(TokenType.FALSE)) return new Literal(TokenType.);
-    if (this.match(TokenType.TRUE)) return new Literal(true);
-    if (this.match(TokenType.NIL)) return new Literal(null);
 
-    if (match(NUMBER, STRING)) {
-      return new Expr.Literal(previous().literal);
+  private primary(): Expr {
+    if (this.match(TokenType.FALSE)) return new Literal(false)
+    if (this.match(TokenType.TRUE)) return new Literal(true)
+    if (this.match(TokenType.NIL)) return new Literal(null)
+
+    if (this.match(TokenType.NUMBER, TokenType.STRING)) {
+      return new Literal(this.previous().literal)
     }
 
-    if (match(LEFT_PAREN)) {
-      Expr expr = expression();
-      consume(RIGHT_PAREN, "Expect ')' after expression.");
-      return new Expr.Grouping(expr);
+    if (this.match(TokenType.LEFT_PAREN)) {
+      const expr = this.expression()
+      this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
+      return new Grouping(expr)
     }
+  }
+
+  private consume(token: TokenType, message: string): Token {
+    if (this.check(token)) return this.advance()
+    throw ErrorHandler.error(this.peek().line, message)
   }
 
   private unary(): Expr {
