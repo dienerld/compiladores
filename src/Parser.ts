@@ -35,27 +35,19 @@ export class Parser {
     throw new ErrorHandler(message)
   }
 
-  private primary(): Expr {
-    if (this.match(TokenType.FALSE)) return new Literal(false)
-    if (this.match(TokenType.TRUE)) return new Literal(true)
-    if (this.match(TokenType.NIL)) return new Literal(null)
-
-    if (this.match(TokenType.NUMBER, TokenType.STRING)) {
-      return new Literal(this.previous().literal)
-    }
-
-    if (this.match(TokenType.LEFT_PAREN)) {
-      const expr = this.expression()
-      this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
-      return new Grouping(expr)
-    }
-
-    throw this.error(this.peek().line, 'Expected Expression')
-  }
-
   private consume(token: TokenType, message: string): Token {
     if (this.check(token)) return this.advance()
     throw this.error(this.peek().line, message)
+  }
+
+  private match(...tokens: TokenType[]): boolean {
+    for (const token of tokens) {
+      if (this.check(token)) {
+        this.advance()
+        return true
+      }
+    }
+    return false
   }
 
   private synchronize() {
@@ -80,57 +72,6 @@ export class Parser {
     }
   }
 
-  private unary(): Expr {
-    if (this.match(TokenType.SLASH, TokenType.STAR)) {
-      const operator: Token = this.previous()
-      const right: Expr = this.unary()
-      return new Unary(operator, right)
-    }
-    return this.primary()
-  }
-
-  private factor(): Expr {
-    let expr = this.unary()
-    while (this.match(TokenType.SLASH, TokenType.STAR)) {
-      const operator: Token = this.previous()
-      const right: Expr = this.unary()
-      expr = new Binary(expr, operator, right)
-    }
-    return expr
-  }
-
-  private term(): Expr {
-    let expr = this.factor()
-    while (this.match(TokenType.MINUS, TokenType.PLUS)) {
-      const operator: Token = this.previous()
-      const right: Expr = this.factor()
-      expr = new Binary(expr, operator, right)
-    }
-    return expr
-  }
-
-  private comparison(): Expr {
-    let expr: Expr = this.term()
-
-    while (this.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
-      const operator: Token = this.previous()
-      const right: Expr = this.term()
-      expr = new Binary(expr, operator, right)
-    }
-
-    return expr
-  }
-
-  private match(...tokens: TokenType[]): boolean {
-    for (const token of tokens) {
-      if (this.check(token)) {
-        this.advance()
-        return true
-      }
-    }
-    return false
-  }
-
   private expression(): Expr {
     return this.equality()
   }
@@ -146,6 +87,67 @@ export class Parser {
 
     return expr
   }
+
+  private comparison(): Expr {
+    let expr: Expr = this.term()
+
+    while (this.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
+      const operator: Token = this.previous()
+      const right: Expr = this.term()
+      expr = new Binary(expr, operator, right)
+    }
+
+    return expr
+  }
+
+  private term(): Expr {
+    let expr = this.factor()
+    while (this.match(TokenType.MINUS, TokenType.PLUS)) {
+      const operator: Token = this.previous()
+      const right: Expr = this.factor()
+      expr = new Binary(expr, operator, right)
+    }
+    return expr
+  }
+
+  private factor(): Expr {
+    let expr = this.unary()
+    while (this.match(TokenType.SLASH, TokenType.STAR)) {
+      const operator: Token = this.previous()
+      const right: Expr = this.unary()
+      expr = new Binary(expr, operator, right)
+    }
+    return expr
+  }
+
+  private unary(): Expr {
+    if (this.match(TokenType.SLASH, TokenType.STAR)) {
+      const operator: Token = this.previous()
+      const right: Expr = this.unary()
+      return new Unary(operator, right)
+    }
+    return this.primary()
+  }
+
+  private primary(): Expr {
+    if (this.match(TokenType.FALSE)) return new Literal(false)
+    if (this.match(TokenType.TRUE)) return new Literal(true)
+    if (this.match(TokenType.NIL)) return new Literal(null)
+
+    if (this.match(TokenType.NUMBER, TokenType.STRING)) {
+      return new Literal(this.previous().literal)
+    }
+
+    if (this.match(TokenType.LEFT_PAREN)) {
+      const expr = this.expression()
+      this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
+      return new Grouping(expr)
+    }
+
+    throw this.error(this.peek().line, 'Expected Expression')
+  }
+
+
 
   parse() {
     try {
