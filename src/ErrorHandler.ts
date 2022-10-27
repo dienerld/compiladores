@@ -7,7 +7,7 @@ export class ErrorHandler extends Error {
   }
 
   static report (lineNumber: number, where: string, message: string): void {
-    console.error(`[line: ${lineNumber}] Error: ${where}: ${message}`)
+    console.error(`[line ${lineNumber}] at '${where}' Error: ${message}`)
     this.hadError = true
   }
 }

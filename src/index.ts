@@ -4,7 +4,7 @@ import fs from 'fs'
 import { ErrorHandler } from './ErrorHandler'
 import { Scanner } from './Scanner'
 import { Parser } from './Parser'
-import { accept, Binary, Grouping, Literal, Unary, Visitor } from './Ast'
+import { accept, Binary, Grouping, Literal, Ternary, Unary, Visitor } from './Ast'
 
 const args = process.argv.slice(2)
 
@@ -25,6 +25,9 @@ const ASTPrinter: Visitor<string> = {
   },
   literal: (expr: Literal) => {
     return `${expr.value} `
+  },
+  ternary: (expr: Ternary) => {
+    return `(ternary ${accept(expr.condition, ASTPrinter)}${accept(expr.ifTrue, ASTPrinter)}${accept(expr.ifFalse, ASTPrinter)})`
   }
 }
 

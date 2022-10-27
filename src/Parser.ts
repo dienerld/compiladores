@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import { Binary, Expr, Grouping, Literal, Unary } from './Ast'
+import { Binary, Expr, Grouping, Literal, Ternary, Unary } from './Ast'
 import { ErrorHandler } from './ErrorHandler'
 import { Token, TokenType } from './Token'
 
@@ -30,14 +30,14 @@ export class Parser {
     return this.tokens[this.current - 1]
   }
 
-  private error(line: number, message: string): void {
-    ErrorHandler.error(line, message)
+  private error(where: Token, message: string): void {
+    ErrorHandler.report(where.line, where.lexeme, message)
     throw new ErrorHandler(message)
   }
 
   private consume(token: TokenType, message: string): Token {
     if (this.check(token)) return this.advance()
-    throw this.error(this.peek().line, message)
+    throw this.error(this.peek(), message)
   }
 
   private match(...tokens: TokenType[]): boolean {
@@ -54,7 +54,7 @@ export class Parser {
     this.advance()
 
     while (!this.isAtEnd()) {
-      if (this.previous().kind == TokenType.SEMICOLON) return;
+      if (this.previous().kind === TokenType.SEMICOLON) return
 
       switch (this.peek().kind) {
         case TokenType.CLASS:
@@ -65,7 +65,7 @@ export class Parser {
         case TokenType.WHILE:
         case TokenType.PRINT:
         case TokenType.RETURN:
-          return;
+          return
       }
 
       this.advance()
@@ -73,7 +73,21 @@ export class Parser {
   }
 
   private expression(): Expr {
-    return this.equality()
+    return this.ternary()
+  }
+
+  private ternary(): Expr {
+    const expr = this.equality()
+
+    if (this.check(TokenType.QUESTION_MARK)) {
+      this.advance()
+      const ifTrue = this.equality()
+      this.consume(TokenType.COLON, 'Expected Colon')
+      const ifFalse = this.ternary()
+      return new Ternary(expr, ifTrue, ifFalse)
+    }
+
+    return expr
   }
 
   private equality(): Expr {
@@ -130,8 +144,11 @@ export class Parser {
   }
 
   private primary(): Expr {
+    // @ts-expect-error
     if (this.match(TokenType.FALSE)) return new Literal(false)
+    // @ts-expect-error
     if (this.match(TokenType.TRUE)) return new Literal(true)
+    // @ts-expect-error
     if (this.match(TokenType.NIL)) return new Literal(null)
 
     if (this.match(TokenType.NUMBER, TokenType.STRING)) {
@@ -144,10 +161,8 @@ export class Parser {
       return new Grouping(expr)
     }
 
-    throw this.error(this.peek().line, 'Expected Expression')
+    throw this.error(this.peek(), 'Expected Expression')
   }
-
-
 
   parse() {
     try {

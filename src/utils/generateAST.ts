@@ -43,7 +43,8 @@ const classesTemplate = [
   'Binary = left: Expr, operator: Token, right: Expr',
   'Unary = operator: Token, right: Expr',
   'Grouping = expression: Expr',
-  'Literal = value: Token'
+  'Literal = value: Token',
+  'Ternary = condition: Expr, ifTrue: Expr, ifFalse: Expr'
 ]
 
 const args = process.argv.slice(2)

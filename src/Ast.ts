@@ -16,16 +16,21 @@ export class Grouping {
 }
 export class Literal {
   readonly kind = 'literal'
-  constructor(public value: any) {}
+  constructor(public value: Token) {}
+}
+export class Ternary {
+  readonly kind = 'ternary'
+  constructor(public condition: Expr, public ifTrue: Expr, public ifFalse: Expr) {}
 }
 
-export type Expr = Binary | Unary | Grouping | Literal
+export type Expr = Binary | Unary | Grouping | Literal | Ternary
 
 export interface Visitor<R> {
   binary: (expr: Binary) => R
   unary: (expr: Unary) => R
   grouping: (expr: Grouping) => R
   literal: (expr: Literal) => R
+  ternary: (expr: Ternary) => R
 }
 
 export function accept<R>(self: Expr, visitor: Visitor<R>) {

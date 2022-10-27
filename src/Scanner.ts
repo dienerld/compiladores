@@ -96,7 +96,8 @@ export class Scanner {
       case '-': this.push(TokenType.MINUS); break
       case '+': this.push(TokenType.PLUS); break
       case ';': this.push(TokenType.SEMICOLON); break
-      case '*': this.push(TokenType.STAR); break
+      case '?': this.push(TokenType.QUESTION_MARK); break
+      case ':': this.push(TokenType.COLON); break
       case '!':
         this.push(this.expect('=') ? TokenType.BANG_EQUAL : TokenType.BANG)
         break
