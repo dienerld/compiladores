@@ -76,12 +76,13 @@ export class Parser {
     return this.ternary()
   }
 
+  // ternary ::= equality ? expression : ternary
   private ternary(): Expr {
     const expr = this.equality()
 
     if (this.check(TokenType.QUESTION_MARK)) {
       this.advance()
-      const ifTrue = this.equality()
+      const ifTrue = this.expression()
       this.consume(TokenType.COLON, 'Expected Colon')
       const ifFalse = this.ternary()
       return new Ternary(expr, ifTrue, ifFalse)
@@ -135,7 +136,7 @@ export class Parser {
   }
 
   private unary(): Expr {
-    if (this.match(TokenType.SLASH, TokenType.STAR)) {
+    if (this.match(TokenType.MINUS, TokenType.BANG)) {
       const operator: Token = this.previous()
       const right: Expr = this.unary()
       return new Unary(operator, right)
@@ -148,7 +149,6 @@ export class Parser {
     if (this.match(TokenType.FALSE)) return new Literal(false)
     // @ts-expect-error
     if (this.match(TokenType.TRUE)) return new Literal(true)
-    // @ts-expect-error
     if (this.match(TokenType.NIL)) return new Literal(null)
 
     if (this.match(TokenType.NUMBER, TokenType.STRING)) {

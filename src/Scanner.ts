@@ -94,6 +94,7 @@ export class Scanner {
       case ',': this.push(TokenType.COMMA); break
       case '.': this.push(TokenType.DOT); break
       case '-': this.push(TokenType.MINUS); break
+      case '*': this.push(TokenType.STAR); break
       case '+': this.push(TokenType.PLUS); break
       case ';': this.push(TokenType.SEMICOLON); break
       case '?': this.push(TokenType.QUESTION_MARK); break
@@ -144,7 +145,7 @@ export class Scanner {
         } else if (isAlpha(c)) {
           this.scanIdentifier()
         } else {
-          ErrorHandler.error(this.line, 'Unexpected character.')
+          ErrorHandler.error(this.line, 'Unexpected character' + c)
         }
         break
     }

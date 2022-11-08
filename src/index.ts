@@ -5,6 +5,7 @@ import { ErrorHandler } from './ErrorHandler'
 import { Scanner } from './Scanner'
 import { Parser } from './Parser'
 import { accept, Binary, Grouping, Literal, Ternary, Unary, Visitor } from './Ast'
+import { Interpreter } from './Interpreter'
 
 const args = process.argv.slice(2)
 
@@ -64,5 +65,5 @@ function run (source: string): void {
 
   if (ErrorHandler.hadError || expr === null) return
 
-  console.log(accept(expr, ASTPrinter))
+  console.log(accept(expr, Interpreter))
 }
