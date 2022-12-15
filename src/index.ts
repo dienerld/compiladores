@@ -52,8 +52,9 @@ function run (source: string): void {
   const tokens = scanner.scan()
   const parser = new Parser(tokens)
   const expr = parser.parse()
-
   if (ErrorHandler.hadError || expr === null) return
-
-  console.log(accept(expr, Interpreter))
+  try {
+    const printer = accept(expr, Interpreter)
+    console.log(printer)
+  } catch (e) {}
 }
