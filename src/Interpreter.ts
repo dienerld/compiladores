@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-throw-literal */
 import { Visitor, Binary, Unary, Grouping, Literal, accept, Ternary } from './Ast'
 import { TokenType } from './Token'
+import { ErrorHandler } from './ErrorHandler'
 
 type LoxValue = any
 
@@ -9,16 +11,30 @@ function isTruthy (value: any) {
   return true
 }
 
+function arithmeticBinaryNumeric(f: Function) {
+  return (x: any, y: any) => {
+    if (typeof x === 'number' && typeof y === 'number') {
+      return f(x, y)
+    }
+    throw ErrorHandler.error(0, 'Operators must be numbers')
+  }
+}
+
 const unaryOperators = new Map<TokenType, Function>([
-  [TokenType.MINUS, x => -x],
+  [TokenType.MINUS, x => {
+    if (typeof x === 'number') {
+      return -x
+    }
+    ErrorHandler.error(0, 'Operator must be a number')
+  }],
   [TokenType.BANG, x => !isTruthy(x)]
 ])
 
 const binaryOperators = new Map<TokenType, Function>([
-  [TokenType.MINUS, (x, y) => x - y],
+  [TokenType.MINUS, arithmeticBinaryNumeric((x, y) => x - y)],
   [TokenType.PLUS, (x, y) => x + y],
-  [TokenType.STAR, (x, y) => x * y],
-  [TokenType.SLASH, (x, y) => x / y],
+  [TokenType.STAR, arithmeticBinaryNumeric((x, y) => x * y)],
+  [TokenType.SLASH, arithmeticBinaryNumeric((x, y) => x / y)],
   [TokenType.GREATER, (x, y) => x > y],
   [TokenType.GREATER_EQUAL, (x, y) => x >= y],
   [TokenType.LESS, (x, y) => x < y],
