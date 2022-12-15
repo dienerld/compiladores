@@ -22,7 +22,6 @@
   },
   "scripts": {
     "start": "ts-node src/index.ts",
-    "generate": "ts-node src/utils/generateAST.ts src",
-    "test": "ts-node test.ts"
+    "generate": "ts-node src/utils/generateAST.ts src"
   }
 }
