@@ -105,7 +105,10 @@ export class Parser {
   private comparison(): Expr {
     let expr: Expr = this.term()
 
-    while (this.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
+    while (this.match(
+      TokenType.GREATER, TokenType.GREATER_EQUAL,
+      TokenType.LESS, TokenType.LESS_EQUAL
+    )) {
       const operator: Token = this.previous()
       const right: Expr = this.term()
       expr = new Binary(expr, operator, right)
