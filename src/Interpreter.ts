@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { Visitor, Binary, Unary, Grouping, Literal, accept, Ternary } from './Ast'
 import { TokenType } from './Token'
 

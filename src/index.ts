@@ -15,21 +15,11 @@ if (args.length > 1) {
 }
 
 const ASTPrinter: Visitor<string> = {
-  binary: (expr: Binary) => {
-    return `(${expr.operator.toPretty()}${accept(expr.left, ASTPrinter)}${accept(expr.right, ASTPrinter)})`
-  },
-  unary: (expr: Unary) => {
-    return `(${expr.operator.toPretty}${accept(expr.right, ASTPrinter)})`
-  },
-  grouping: (expr: Grouping) => {
-    return `(group ${accept(expr.expression, ASTPrinter)})`
-  },
-  literal: (expr: Literal) => {
-    return `${expr.value} `
-  },
-  ternary: (expr: Ternary) => {
-    return `(ternary ${accept(expr.condition, ASTPrinter)}${accept(expr.ifTrue, ASTPrinter)}${accept(expr.ifFalse, ASTPrinter)})`
-  }
+  binary: (expr: Binary) => `(${expr.operator.toPretty()}${accept(expr.left, ASTPrinter)}${accept(expr.right, ASTPrinter)})`,
+  unary: (expr: Unary) => `(${expr.operator.toPretty}${accept(expr.right, ASTPrinter)})`,
+  grouping: (expr: Grouping) => `(group ${accept(expr.expression, ASTPrinter)})`,
+  literal: (expr: Literal) => `${expr.value} `,
+  ternary: (expr: Ternary) => `(ternary ${accept(expr.condition, ASTPrinter)}${accept(expr.ifTrue, ASTPrinter)}${accept(expr.ifFalse, ASTPrinter)})`
 }
 
 if (args.length === 1) {

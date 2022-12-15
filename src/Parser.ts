@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-throw-literal */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { Binary, Expr, Grouping, Literal, Ternary, Unary } from './Ast'
 import { ErrorHandler } from './ErrorHandler'
 import { Token, TokenType } from './Token'
@@ -37,6 +35,7 @@ export class Parser {
 
   private consume(token: TokenType, message: string): Token {
     if (this.check(token)) return this.advance()
+    // eslint-disable-next-line @typescript-eslint/no-throw-literal
     throw this.error(this.peek(), message)
   }
 
@@ -160,7 +159,7 @@ export class Parser {
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
       return new Grouping(expr)
     }
-
+    // eslint-disable-next-line @typescript-eslint/no-throw-literal
     throw this.error(this.peek(), 'Expected Expression')
   }
 

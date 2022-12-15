@@ -48,7 +48,6 @@ const classesTemplate = [
 ]
 
 const args = process.argv.slice(2)
-
 if (args.length === 1) {
   defineAst(args[0], classesTemplate)
 }

@@ -71,7 +71,6 @@ export class Scanner {
     return this.source.charAt(this.current + 1)
   }
 
-  // match Durelli
   expect(expected: string) {
     if (this.source.charAt(this.current) != expected) return false
 
